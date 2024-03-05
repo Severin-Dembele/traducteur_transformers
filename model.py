@@ -143,4 +143,20 @@ class Encoderblock(nn.Module):
         self.residual_connection = nn.Module([ ResidualConnection(dropout) for _ in range(2) ])
         
     def forward(self, x, src_mask):
-        x = 
+        x = self.residual_connections[0](x,lambda x: self.feed_forward_block(x,x,x,src_mask))
+        x = self.residual_connections[1](x, self.feed_forward_block)
+        return x    
+    
+    
+class Encoder(nn.module):   
+    
+    def __init__(self, layers: nn.Module) -> None:
+        super().__init__()
+        self.n_layers = n_layers
+        self.norm = LayerNormalization()
+        
+    def forward(self, x, mask):
+        for layer in self.layers:
+            x=layer(x, mask)
+        return self.norm(x)
+    
